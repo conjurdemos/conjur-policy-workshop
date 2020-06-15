@@ -1,0 +1,36 @@
+#======================
+# APPTEAM1 ROOT POLICY
+# AppTeam Policy Template where policy namespace = EPV safe name
+# Creates admin identity to delegate policy mgmt and role to grant authn to app identities.
+# This policy must be bulk-loaded with other root policies.
+# Create one policy for each application team, named for the application team.
+#======================
+
+# Admin identity w/ CIDR limitation
+- !host
+  id: appteam1_svc
+  restricted_to: 172.17.0.3
+
+# Create root policy for appteam1
+- !policy
+  id: appteam1
+  owner: !host appteam1_svc
+  body:
+  - !group consumers
+
+# Grant cross-platform authn to appteam1/consumers role
+- !grant
+  roles:
+  - !group conjur/authn-iam/lab/consumers
+  - !group conjur/authn-azure/lab/consumers
+  - !group conjur/authn-k8s/lab/consumers
+  members:
+  - !group appteam1/consumers
+
+# Give admin identity role to update Synchronizer policy
+- !grant
+  role: !group LabVault-admins
+  member: !host appteam1_svc
+
+# END APPTEAM1 ROOT
+

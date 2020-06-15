@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# This script deletes running instances and brings up 
+#   initialized Conjur Primary & CLI nodes.
+
+#################
+main() {
+  stop
+  while [[ "$(docker ps -a | grep $CONJUR_MASTER_CONTAINER_NAME)" != "" ]]; do
+    echo -n '.'
+    sleep 3
+  done
+#  configure_networking
+  master_up
+  cli_up
+  exec-into-cli.sh
+}
+
+############################
+configure_networking() {
+  # enable IPV4 port forwarding
+  sysctl -w net.ipv4.ip_forward=1
+  # update local firewall rules to allow container-container connections
+  firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=172.17.0.0/16 accept'
+  firewall-cmd --reload
+}
+
+############################
+master_up() {
+  # Bring up Conjur Master node
+  docker run -d \
+    --name $CONJUR_MASTER_CONTAINER_NAME \
+    --label role=conjur_node \
+    -p "$CONJUR_MASTER_PORT:443" \
+    -p "$CONJUR_MASTER_PGSYNC_PORT:5432" \
+    -p "$CONJUR_MASTER_PGAUDIT_PORT:1999" \
+    --restart always \
+    --security-opt seccomp:unconfined \
+    $LOCAL_APPLIANCE_IMAGE 
+
+  # Configure Conjur Master node
+  echo "Configuring Conjur master..."
+  docker exec $CONJUR_MASTER_CONTAINER_NAME \
+                evoke configure master      \
+                -h $CONJUR_MASTER_HOSTNAME \
+                -p $CONJUR_ADMIN_PASSWORD   \
+		--accept-eula		    \
+                $CONJUR_ACCOUNT
+
+  echo "Master configured."
+}
+
+############################
+cli_up() {
+  docker run -d \
+    --name $CLI_CONTAINER_NAME \
+    --label role=cli \
+    --restart always \
+    --security-opt seccomp:unconfined \
+    --add-host "$CONJUR_MASTER_HOSTNAME:$CONJUR_MASTER_HOST_IP" \
+    --entrypoint sh \
+    $LOCAL_CLI_IMAGE \
+    -c "sleep infinity"
+
+  # Initialize connection to service (create .conjurrc and conjur-xx.pem cert)
+  docker exec $CLI_CONTAINER_NAME \
+    bash -c "echo yes | conjur init -u $CONJUR_APPLIANCE_URL -a $CONJUR_ACCOUNT"
+
+  # Login as admin
+  docker exec $CLI_CONTAINER_NAME \
+    conjur authn login -u admin -p $AUTHN_PASSWORD
+
+  # use 'docker cp' in lieu of volume mount
+  docker cp $WORKSHOP_HOME_DIR/ $CLI_CONTAINER_NAME:/demo
+}
+
+main "$@"

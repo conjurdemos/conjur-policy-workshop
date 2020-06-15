@@ -1,0 +1,24 @@
+    # =================================================
+    # SEED-SERVICE ROOT POLICY
+    # Create webservice and consumers role for the Seed Service
+    # Note 4-space indentation – this is created “under” the authn-k8s policy
+    # This policy must be bulk-loaded with other root policies.
+    # Create one policy per authn-k8s webservice endpoint (one per cluster).
+    # =================================================
+    - !policy
+      id: seed-generation
+      body:
+      - !webservice
+
+      # Hosts that generate seeds become members of the
+      # `consumers` group.
+      - !group consumers
+
+      # Authorize `consumers` to request seeds
+      - !permit
+        role: !group consumers
+        privilege: [ "execute" ]
+        resource: !webservice
+
+    # END SEED-SERVICE
+

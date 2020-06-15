@@ -1,0 +1,16 @@
+---
+- !policy
+  id: cust_portal
+  body:
+  - !variable key
+  - !group apps
+
+  - !permit
+    role: !group apps
+    privilege: [ read, execute ]
+    resources: !variable key
+
+  - !policy
+    id: nginx
+    body:
+    - !variable password

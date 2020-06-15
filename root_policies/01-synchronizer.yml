@@ -1,0 +1,22 @@
+# =================================================
+# SYNCHRONIZER ROOT POLICY
+# Creates a Synchronizer compatible policy with variables.
+# Useful for pre-creating secrets ahead of Vault/Conjur synchronizer
+# THIS POLICY MUST BE LOADED FIRST when bulk-loaded with other root policies.
+# =================================================
+
+- !group LabVault-admins
+- !host Sync_W176485
+- !grant
+  role: !group LabVault-admins
+  members: !host Sync_W176485
+
+#########################
+# Vault RBAC
+# - updates vault policy with LOB admin group
+- !policy
+  id: LabVault
+  owner: !group /LabVault-admins
+
+# END SYNCHRONIZER-ROOT-POLICY
+

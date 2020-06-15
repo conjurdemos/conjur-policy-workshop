@@ -1,0 +1,24 @@
+---
+- !policy
+  id: cust_portal
+  body:
+  - !delete
+    record: !variable password
+  - !variable key
+  - !group apps
+  - !permit
+    role: !group apps
+    privilege: [ read, execute ]
+    resources: !variable key
+
+- !host my_app
+
+- !revoke
+  role: !group cust_portal/apps
+  members: !host my_app
+
+- !host your_app
+
+- !grant
+  role: !group cust_portal/apps
+  members: !host your_app

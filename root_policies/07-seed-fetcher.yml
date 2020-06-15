@@ -1,0 +1,33 @@
+# =================================================
+# SEEDFETCHER IDENTITY POLICY
+# Create privileged OCP/K8s seed-service client identities for Follower initialization
+# Note no indentation – this is created “under” the root policy
+# This policy must be bulk-loaded with other root policies.
+# Create one policy per authn-k8s webservice endpoint (one per cluster).
+# =================================================
+
+# Create one policy per cluster, w/ policy ID named for authn-k8s/id
+- !policy
+  id: lab
+  body:
+
+  # Define Follower host identity for authentication service in CyberArk namespace
+  - !host
+    id: dap-authn-service
+    annotations:
+      authn-k8s/namespace: cybrlab
+      authn-k8s/service_account/name: dap-authn-service
+      authn-k8s/authentication-container-name: authenticator
+
+# Grant roles that gives Follower host identity permission to:
+#  - authenticate to the cluster authn-k8s endpoint
+#  - execute the seed-generation webservice
+- !grant
+  roles:
+  - !group conjur/authn-k8s/lab/consumers
+  - !group conjur/authn-k8s/lab/seed-generation/consumers
+  members:
+  - !host lab/dap-authn-service
+
+# END SEEDFETCHER
+

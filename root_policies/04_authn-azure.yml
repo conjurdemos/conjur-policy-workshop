@@ -1,0 +1,24 @@
+  # =================================================
+  # AUTHN-AZURE ROOT POLICY
+  # Creates webservice and consumers role for Azure authentication
+  # Note 2-space indentation – this is created “under” the conjur policy
+  # This policy must be bulk-loaded with other root policies.
+  # Create one policy per authn-azure webservice endpoint (usually one per tenant).
+  # =================================================
+  - !policy
+    id: authn-azure/lab
+    owner: !host /authn-azure_svc
+    body:
+    - !webservice
+    - !variable provider-uri
+    - !group
+      id: consumers
+      annotations:
+        description: Group of hosts who can authenticate using the authn-azure/lab endpoint
+    - !permit
+      role: !group consumers
+      privilege: [ read, authenticate ]
+      resource: !webservice
+
+  # END AUTHN-AZURE
+

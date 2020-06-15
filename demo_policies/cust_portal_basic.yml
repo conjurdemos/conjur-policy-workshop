@@ -1,0 +1,11 @@
+---
+- !policy
+  id: cust_portal
+  body:
+  - !host my_app         # identity
+  - !variable password   # variable
+
+  - !permit              # identity can read var
+    role: !host my_app
+    privileges: [ read, execute ]
+    resources: !variable password

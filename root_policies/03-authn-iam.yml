@@ -1,0 +1,20 @@
+  # =================================================
+  # AUTHN-IAM ROOT POLICY
+  # Creates webservice and consumers role for AWS IAM authentication
+  # Note 2-space indentation – this is created “under” the conjur policy
+  # This policy must be bulk-loaded with other root policies.
+  # Create one policy per authn-iam webservice endpoint.
+  # =================================================
+  - !policy
+    id: authn-iam/lab
+    owner: !host /authn-iam_svc
+    body:
+    - !webservice
+    - !group consumers
+    - !permit
+      role: !group consumers
+      privilege: [ read, authenticate ]
+      resource: !webservice
+
+  # END AUTHN-IAM
+

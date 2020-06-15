@@ -1,0 +1,39 @@
+  # =================================================
+  # AUTHN-K8S ROOT POLICY
+  # Creates variables, webservice and consumers role for K8s authentication
+  # Note 2-space indentation – this is created “under” the conjur policy
+  # This policy must be bulk-loaded with other root policies.
+  # Create one policy per authn-k8s webservice endpoint (one per cluster).
+  # =================================================
+  - !policy
+    id: authn-k8s/lab
+    owner: !host /authn-k8s_svc
+    annotations:
+      description: authn-k8s defs for the cluster
+    body:
+
+    # vars for ocp/k8s api url & access creds
+    - !variable kubernetes/service-account-token
+    - !variable kubernetes/ca-cert
+    - !variable kubernetes/api-url
+
+    # vars for CA for this authenticator ID
+    - !variable ca/cert
+    - !variable ca/key
+
+    - !webservice
+      annotations:
+        description: authn service for cluster lab
+
+    # Hosts that can authenticate become members of the
+    # `consumers` group.
+    - !group consumers
+
+    # Grant consumers group role authentication privileges
+    - !permit
+      role: !group consumers
+      privilege: [ read, authenticate ]
+      resource: !webservice
+
+    # END AUTHN-K8S
+

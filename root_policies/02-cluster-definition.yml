@@ -1,0 +1,44 @@
+# =================================================
+# CLUSTER DEFINITION POLICY
+# This policy must be bulk-loaded with other root policies.
+# Policy admin owner identities, for delegating admin responsibilities.
+# =================================================
+
+# Admin host roles for authenticators
+- !host
+  id: authn-k8s_svc
+- !host
+  id: authn-iam_svc
+- !host
+  id: authn-azure_svc
+
+# =================================================
+# All cluster & authn-* endpoints fall under this policy
+# =================================================
+- !policy
+  id: conjur
+  body:
+
+  # =================================================
+  # HA auto-failover cluster
+  # Note 2-space indentation – this is created “under” the conjur policy
+  # =================================================
+  - !policy
+    id: cluster/prod-cluster
+    annotations:
+      ttl: 300
+    body:
+    - !group
+    - &hosts
+      - !host
+        id: conjur-master-1.nate.lab
+      - !host
+        id: conjur-master-2.nate.lab
+      - !host
+        id: conjur-master-3.nate.lab
+    - !grant
+      role: !group
+      member: *hosts
+
+  # END CLUSTER-DEFINITION
+

@@ -1,0 +1,30 @@
+#======================
+# APPTEAM1 IDENTITIES
+# Policy defined & managed by application team.
+# Defines application identities “under” the app team’s root policy.
+# Applied w/ --replace using the AppTeam1_svc service account
+#======================
+
+  - &hosts
+    - !host aws-app/475601244925/GenericReadOnly
+
+    - !host
+      id: azure-app
+      annotations:
+        authn-azure/subscription-id: a01ff134-ae78-4497-b11c-7a698736b8a0
+        authn-azure/resource-group: AppTeam1
+        authn-azure/user-assigned-identity: AppTeam1-UA-Identity
+
+    - !host
+      id: k8s-app
+      annotations:
+        authn-k8s/namespace: appteam1
+        authn-k8s/service-account: appteam1-app1
+        authn-k8s/authentication-container-name: authenticator
+
+  - !grant
+    role: !group consumers
+    members: *hosts
+
+# END APPTEAM1 IDENTITIES
+
