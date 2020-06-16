@@ -2,16 +2,16 @@
 - !policy
   id: cust_portal
   body:
-  - !group apps               # group role
+  - !group consumers          # group role
   - !variable password        # variable
 
   - !permit                   # role can read var
-    role: !group apps
+    role: !group consumers
     privilege: [ read, execute ]
     resources: !variable password
 
 - !host my_app                # identity
 
 - !grant                      # grant identity access to var
-  role: !group cust_portal/apps
+  role: !group cust_portal/consumers
   members: !host my_app

@@ -5,20 +5,20 @@
   - !delete
     record: !variable password
   - !variable key
-  - !group apps
+  - !group consumers
   - !permit
-    role: !group apps
+    role: !group consumers
     privilege: [ read, execute ]
     resources: !variable key
 
 - !host my_app
 
 - !revoke
-  role: !group cust_portal/apps
+  role: !group cust_portal/consumers
   members: !host my_app
 
 - !host your_app
 
 - !grant
-  role: !group cust_portal/apps
+  role: !group cust_portal/consumers
   members: !host your_app

@@ -3,9 +3,9 @@
   id: cust_portal
   body:
   - !variable key
-  - !group apps
+  - !group consumers
 
   - !permit
-    role: !group apps
+    role: !group consumers
     privilege: [ read, execute ]
     resources: !variable key

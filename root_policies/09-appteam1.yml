@@ -9,7 +9,7 @@
 # Admin identity w/ CIDR limitation
 - !host
   id: appteam1_svc
-  restricted_to: 172.17.0.3
+#  restricted_to: 172.17.0.3
 
 # Create root policy for appteam1
 - !policy

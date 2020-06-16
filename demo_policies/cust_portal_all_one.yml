@@ -2,13 +2,13 @@
 - !policy
   id: cust_portal
   body:
-  - !variable key
-  - !group apps
+  - !variable password
+  - !group consumers
 
   - !permit
-    role: !group apps
+    role: !group consumers
     privilege: [ read, execute ]
-    resources: !variable key
+    resources: !variable password
 
   - !policy
     id: nginx
