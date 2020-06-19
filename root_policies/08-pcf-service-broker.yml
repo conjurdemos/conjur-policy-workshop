@@ -6,26 +6,20 @@
 # Create one policy per PCF service broker.
 # =================================================
 
-- !host
-  id: pcf-service-broker
-  annotations:
-    platform: pivotalcloudfoundry
-
-# Allow host read access to its own resource, to read annotations
-- !permit
-  role: !host pcf-service-broker
-  privilege: read
-  resource: !host pcf-service-broker
-
-# Policy ID does not have to be pcf
 - !policy
-  id: pcf 
+  id: pcf
   body:
+   - !host
+     id: pcf-service-broker
 
-    # Multiple VMware Tanzu Foundations may be identified
-    # using a sub-policy branch, e.g. "production".
-  - !policy
-    id: production
+   - !permit
+     role: !host pcf-service-broker
+     privileges: [ read ]
+     resource: !host pcf-service-broker
+
+   - !policy
+      id: sandbox
+      owner: !host pcf-service-broker
 
 # END PCF SERVICE BROKER
 
