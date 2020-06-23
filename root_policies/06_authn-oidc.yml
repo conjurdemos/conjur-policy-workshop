@@ -1,0 +1,29 @@
+  # =================================================
+  # AUTHN-OIDC ROOT POLICY
+  # Creates webservice and consumers role for OIDC authentication
+  # Note 2-space indentation – this is created “under” the conjur policy
+  # This policy must be bulk-loaded with other root policies.
+  # Create one policy per authn-oidc webservice endpoint (usually one per tenant).
+  # =================================================
+  
+  - !policy
+    id: authn-oidc/lab
+    owner: !host /authn-oidc_svc
+    body:
+    - !webservice
+      annotations:
+        description: Authentication service for 'lab', based on OpenID Connect.
+    - !variable
+      id: provider-uri
+    - !variable
+      id: id-token-user-property
+    - !group
+      id: consumers
+      annotations:
+        description: Group of users who can authenticate using the authn-oidc/'lab' authenticator 
+    - !permit
+      role: !group consumers
+      privilege: [ read, authenticate ]
+      resource: !webservice
+      
+  # END AUTHN-OIDC
