@@ -6,8 +6,12 @@
 #======================
 
   - &hosts
-    - !host aws-app/475601244925/GenericReadOnly
-
+    - !host 
+      id: aws-app/475601244925/GenericReadOnly
+    
+    - !host 
+      id: my_host
+    
     - !host
       id: azure-app
       annotations:
