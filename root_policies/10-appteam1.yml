@@ -24,6 +24,7 @@
   - !group conjur/authn-iam/lab/consumers
   - !group conjur/authn-azure/lab/consumers
   - !group conjur/authn-k8s/lab/consumers
+  - !group LabVault/LOBUser/appteam1/delegation/consumers  # consumers group for the `appteam1` safe synchronized by the LOBUser
   members:
   - !group appteam1/consumers
 
