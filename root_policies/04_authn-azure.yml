@@ -10,7 +10,8 @@
     owner: !host /authn-azure_svc
     body:
     - !webservice
-    - !variable provider-uri
+    - !variable 
+      id: provider-uri
     - !group
       id: consumers
       annotations:
