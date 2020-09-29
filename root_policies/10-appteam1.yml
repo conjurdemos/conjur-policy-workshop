@@ -27,10 +27,5 @@
   members:
   - !group appteam1/consumers
 
-# Give admin identity role to update Synchronizer policy
-- !grant
-  role: !group LabVault-admins
-  member: !host appteam1_svc
-
 # END APPTEAM1 ROOT
 
