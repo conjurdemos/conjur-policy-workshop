@@ -7,7 +7,7 @@
 
   - &hosts
     - !host 
-      id: aws-app/475601244925/GenericReadOnly
+      id: 475601244925/GenericReadOnly
     
     - !host 
       id: my_host
