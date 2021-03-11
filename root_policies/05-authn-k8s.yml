@@ -24,10 +24,20 @@
     - !webservice
       annotations:
         description: authn service for cluster lab
+        
+    - !host
+      id: validator
+      annotations:
+        description: Validation host used when configuring a cluster
 
     # Hosts that can authenticate become members of the
     # `consumers` group.
     - !group consumers
+
+    # Ensure the validation host is part of the consumers group
+    - !grant
+      role: !group consumers
+      member: !host validator
 
     # Grant consumers group role authentication privileges
     - !permit
